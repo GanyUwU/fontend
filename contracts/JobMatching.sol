@@ -3,52 +3,55 @@
 pragma solidity ^0.8.0;
 
 contract JobMatching {
-    // Structure to hold job details
+    // Each job is now represented by its IPFS hash + poster
     struct Job {
         uint256 jobId;
-        string title;
-        string description;
-        string[] requiredSkills;
-        uint256 reward;
-        address employer;
+        string ipfsHash;    // IPFS CID of the job JSON
+        address employer;   // who posted it
     }
 
-    // Array to store job postings
     Job[] private jobs;
 
-    // Event emitted when a new job is posted
-    event JobPosted(uint256 indexed jobId, address indexed employer, string title);
+    // Emitted when a new job is posted
+    event JobPosted(
+        uint256 indexed jobId,
+        address indexed employer,
+        string ipfsHash
+    );
 
-    // Function to create a new job posting
-    function createJobPosting(
-        string memory _title,
-        string memory _description,
-        string[] memory _requiredSkills,
-        uint256 _reward
-    ) public {
+    /// @notice Post a new job by supplying the IPFS hash of its JSON data
+    /// @param _ipfsHash The CID where the job details JSON is pinned
+    function createJobPosting(string memory _ipfsHash) public {
         uint256 jobId = jobs.length;
-        jobs.push(Job(jobId, _title, _description, _requiredSkills, _reward, msg.sender));
-        emit JobPosted(jobId, msg.sender, _title);
+        jobs.push(Job({
+            jobId: jobId,
+            ipfsHash: _ipfsHash,
+            employer: msg.sender
+        }));
+        emit JobPosted(jobId, msg.sender, _ipfsHash);
     }
 
-    // Function to retrieve job details by jobId
+    /// @notice Get the CID and poster for a given job
+    /// @param _jobId The index of the job
+    /// @return jobId The job’s ID
+    /// @return ipfsHash The CID of the job data
+    /// @return employer The address that posted the job
     function getJob(uint256 _jobId)
         public
         view
         returns (
-            string memory title,
-            string memory description,
-            string[] memory requiredSkills,
-            uint256 reward,
+            uint256 jobId,
+            string memory ipfsHash,
             address employer
         )
     {
         require(_jobId < jobs.length, "Job does not exist");
-        Job memory job = jobs[_jobId];
-        return (job.title, job.description, job.requiredSkills, job.reward, job.employer);
+        Job storage job = jobs[_jobId];
+        return (job.jobId, job.ipfsHash, job.employer);
     }
 
-    // Function to get the total number of jobs posted
+    /// @notice How many jobs have been posted so far
+    /// @return The total count of jobs
     function getJobCount() public view returns (uint256) {
         return jobs.length;
     }

@@ -5,14 +5,102 @@ import JobListing from '../components/JobListing';
 import JobPostingForm from '../components/JobPostingForm';
 import UserProfile from '../components/UserProfile';
 import './Home.css';  // Import the CSS file
+import web3 from '../utils/web3';
 
-// Dummy job data for demonstration
-const dummyJob = {
-  title: "Frontend Developer",
-  description: "We are looking for a skilled frontend developer with experience in React.",
-  reward: "0.5 ETH",
-  employer: "Blockchain Inc."
-};
+
+// // Dummy job data for demonstration
+// const dummyJob = {
+//   title: "Frontend Developer",
+//   description: "We are looking for a skilled frontend developer with experience in React.",
+//   reward: "0.5 ETH",
+//   employer: "Blockchain Inc."
+// };
+const contractAddress = "0x9aA9E001ee27bFd654D71717FC7b09C74df9B35E"; // ✅ same as JobPostingForm
+const jobMatchingABI = [
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "jobId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "employer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "ipfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "JobPosted",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_ipfsHash",
+        "type": "string"
+      }
+    ],
+    "name": "createJobPosting",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_jobId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getJob",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "jobId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "ipfsHash",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "employer",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [],
+    "name": "getJobCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  }
+];
+const jobContract = new web3.eth.Contract(jobMatchingABI, contractAddress);
 
 const Home = () => {
   return (
@@ -129,7 +217,7 @@ const Home = () => {
               "type": "function"
             }
           ]} 
-          contractAddress="0x8B3199d62C55e20Ef07d5738F55e3D0fE992AF39" 
+          contractAddress="0x56839D327054cCF57503Dd7f1a691ad270DE3E15" 
         />
       </section>
 
@@ -250,120 +338,14 @@ const Home = () => {
       <section className="section">
         <h2>Post a Job</h2>
         <JobPostingForm 
-          jobMatchingABI={[
-            {
-              "inputs": [
-                {
-                  "internalType": "string",
-                  "name": "_title",
-                  "type": "string"
-                },
-                {
-                  "internalType": "string",
-                  "name": "_description",
-                  "type": "string"
-                },
-                {
-                  "internalType": "string[]",
-                  "name": "_requiredSkills",
-                  "type": "string[]"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "_reward",
-                  "type": "uint256"
-                }
-              ],
-              "name": "createJobPosting",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": true,
-                  "internalType": "uint256",
-                  "name": "jobId",
-                  "type": "uint256"
-                },
-                {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "employer",
-                  "type": "address"
-                },
-                {
-                  "indexed": false,
-                  "internalType": "string",
-                  "name": "title",
-                  "type": "string"
-                }
-              ],
-              "name": "JobPosted",
-              "type": "event"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "_jobId",
-                  "type": "uint256"
-                }
-              ],
-              "name": "getJob",
-              "outputs": [
-                {
-                  "internalType": "string",
-                  "name": "title",
-                  "type": "string"
-                },
-                {
-                  "internalType": "string",
-                  "name": "description",
-                  "type": "string"
-                },
-                {
-                  "internalType": "string[]",
-                  "name": "requiredSkills",
-                  "type": "string[]"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "reward",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "address",
-                  "name": "employer",
-                  "type": "address"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "getJobCount",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            }
-          ]} 
-          contractAddress="0x6456311824Deb689498f8D4466F5A21e6241C6DC" 
+          jobMatchingABI={jobMatchingABI}
+          contractAddress="0x9aA9E001ee27bFd654D71717FC7b09C74df9B35E" 
         />
       </section>
-
+      
       <section className="section">
         <h2>Job Listings</h2>
-        <JobListing job={dummyJob} />
+        <JobListing jobId={0} contract={jobContract} />
       </section>
     </div>
   );

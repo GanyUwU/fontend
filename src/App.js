@@ -5,12 +5,14 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/homepage';
 import Profile from './pages/Profile';
 import JobBoard from './pages/JobBoard';
-import CreateJob from './pages/CreateJob';
+import MyJobPostings from './pages/CreateJob';
 import SignInPage from './pages/SignInPage';
-import web3 from './utils/web3';
+import JobPostingForm from './components/JobPostingForm';
+import JobListing from './components/JobListing';
+
 
  function App() {
-  const userProfileContractAddress = '0x8B3199d62C55e20Ef07d5738F55e3D0fE992AF39';
+  const userProfileContractAddress = '0x56839D327054cCF57503Dd7f1a691ad270DE3E15';
   const userProfileABI = [
     {
       "anonymous": false,
@@ -60,19 +62,6 @@ import web3 from './utils/web3';
       "inputs": [
         {
           "internalType": "string",
-          "name": "_email",
-          "type": "string"
-        }
-      ],
-      "name": "setEmail",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
           "name": "_name",
           "type": "string"
         },
@@ -83,6 +72,19 @@ import web3 from './utils/web3';
         }
       ],
       "name": "uploadCredential",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_email",
+          "type": "string"
+        }
+      ],
+      "name": "setEmail",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -114,39 +116,12 @@ import web3 from './utils/web3';
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     }
   ]; 
-  const jobMatchingContractAddress = '0x6456311824Deb689498f8D4466F5A21e6241C6DC';
-  const jobMatchingABI =  [
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_title",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_description",
-          "type": "string"
-        },
-        {
-          "internalType": "string[]",
-          "name": "_requiredSkills",
-          "type": "string[]"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_reward",
-          "type": "uint256"
-        }
-      ],
-      "name": "createJobPosting",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
+  const jobMatchingContractAddress = '0x9aA9E001ee27bFd654D71717FC7b09C74df9B35E';
+  const jobMatchingABI = [
     {
       "anonymous": false,
       "inputs": [
@@ -165,12 +140,25 @@ import web3 from './utils/web3';
         {
           "indexed": false,
           "internalType": "string",
-          "name": "title",
+          "name": "ipfsHash",
           "type": "string"
         }
       ],
       "name": "JobPosted",
       "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_ipfsHash",
+          "type": "string"
+        }
+      ],
+      "name": "createJobPosting",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     },
     {
       "inputs": [
@@ -183,24 +171,14 @@ import web3 from './utils/web3';
       "name": "getJob",
       "outputs": [
         {
-          "internalType": "string",
-          "name": "title",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "description",
-          "type": "string"
-        },
-        {
-          "internalType": "string[]",
-          "name": "requiredSkills",
-          "type": "string[]"
-        },
-        {
           "internalType": "uint256",
-          "name": "reward",
+          "name": "jobId",
           "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "ipfsHash",
+          "type": "string"
         },
         {
           "internalType": "address",
@@ -209,7 +187,8 @@ import web3 from './utils/web3';
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -222,27 +201,71 @@ import web3 from './utils/web3';
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     }
-  ] ;
+  ];
   
 
   return (
     <Router>
       <Routes>
+        {/* Landing page */}
         <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile userProfileABI={userProfileABI} contractAddress={userProfileContractAddress} />} />
-        <Route path="/jobs" element={<JobBoard jobMatchingABI={jobMatchingABI} contractAddress={jobMatchingContractAddress} />} />
-        <Route path="/create-job" element={<CreateJob jobMatchingABI={jobMatchingABI} contractAddress={jobMatchingContractAddress} />} />
-        
-        <Route 
-          path="/signin" 
+
+        {/* Sign in with MetaMask */}
+        <Route
+          path="/signin"
           element={
-            <SignInPage 
-              userProfileABI={userProfileABI} 
-              contractAddress={userProfileContractAddress} 
+            <SignInPage
+              userProfileABI={userProfileABI}
+              contractAddress={userProfileContractAddress}
             />
-          } 
+          }
+        />
+
+        {/* View your profile */}
+        <Route
+          path="/profile"
+          element={
+            <Profile
+              userProfileABI={userProfileABI}
+              contractAddress={userProfileContractAddress}
+            />
+          }
+        />
+
+        {/* Browse all jobs */}
+        <Route
+          path="/jobs"
+          element={
+            <JobBoard
+              jobMatchingABI={jobMatchingABI}
+              contractAddress={jobMatchingContractAddress}
+            />
+          }
+        />
+
+        {/* Create a new job posting */}
+        <Route
+          path="/create-job"
+          element={
+            <JobPostingForm
+              jobMatchingABI={jobMatchingABI}
+              contractAddress={jobMatchingContractAddress}
+            />
+          }
+        />
+
+        {/* View jobs YOU have posted */}
+        <Route
+          path="/my-jobs"
+          element={
+            <JobListing
+              jobMatchingABI={jobMatchingABI}
+              contractAddress={jobMatchingContractAddress}
+            />
+          }
         />
       </Routes>
     </Router>
