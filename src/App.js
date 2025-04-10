@@ -3,16 +3,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/homepage';
-import Profile from './pages/Profile';
+import web3 from './utils/web3';
 import JobBoard from './pages/JobBoard';
 import MyJobPostings from './pages/CreateJob';
 import SignInPage from './pages/SignInPage';
 import JobPostingForm from './components/JobPostingForm';
-import JobListing from './components/JobListing';
+import PrivateRoute from './components/PrivateRoute';
+import CredentialForm from './components/CredentialForm';
+
 
 
  function App() {
-  const userProfileContractAddress = '0x56839D327054cCF57503Dd7f1a691ad270DE3E15';
+  const userProfileContractAddress = '0xE9BA90c01bc61918b0A7941846E4a208E8251763';
   const userProfileABI = [
     {
       "anonymous": false,
@@ -59,6 +61,79 @@ import JobListing from './components/JobListing';
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum UserProfile.Role",
+          "name": "role",
+          "type": "uint8"
+        }
+      ],
+      "name": "RoleAssigned",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "roles",
+      "outputs": [
+        {
+          "internalType": "enum UserProfile.Role",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [],
+      "name": "registerAsJobSeeker",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "registerAsHR",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserRole",
+      "outputs": [
+        {
+          "internalType": "enum UserProfile.Role",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
       "inputs": [
         {
           "internalType": "string",
@@ -101,17 +176,17 @@ import JobListing from './components/JobListing';
       "outputs": [
         {
           "internalType": "string",
-          "name": "",
+          "name": "name",
           "type": "string"
         },
         {
           "internalType": "string",
-          "name": "",
+          "name": "email",
           "type": "string"
         },
         {
           "internalType": "string",
-          "name": "",
+          "name": "ipfsHash",
           "type": "string"
         }
       ],
@@ -120,8 +195,19 @@ import JobListing from './components/JobListing';
       "constant": true
     }
   ]; 
-  const jobMatchingContractAddress = '0x9aA9E001ee27bFd654D71717FC7b09C74df9B35E';
+  const jobMatchingContractAddress = '0xa9bE53E9853F120BbA5122E328b0941Da4Fda161';
   const jobMatchingABI = [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "userProfileAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
     {
       "anonymous": false,
       "inputs": [
@@ -146,6 +232,20 @@ import JobListing from './components/JobListing';
       ],
       "name": "JobPosted",
       "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "userProfile",
+      "outputs": [
+        {
+          "internalType": "contract UserProfile",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -206,67 +306,98 @@ import JobListing from './components/JobListing';
     }
   ];
   
+  const [account, setAccount] = React.useState(null);
+  const [role, setRole] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  
+  React.useEffect(() => {
+    const fetchAccountAndRole = async () => {
+      if (window.ethereum) {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        const acc = accounts[0];
+        setAccount(acc);
+
+        if (acc) {
+          const contract = new web3.eth.Contract(userProfileABI, userProfileContractAddress);
+          const roleValue = await contract.methods.getUserRole(acc).call();
+          const normalizedRole = parseInt(roleValue);
+
+          if (normalizedRole === 1) setRole('JobSeeker');
+          else if (normalizedRole === 2) setRole('HR');
+          else setRole('None');
+        }
+      }
+      setLoading(false); // ✅ now we can render routes
+    };
+
+    fetchAccountAndRole();
+
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        setAccount(accounts[0]);
+        fetchAccountAndRole();
+      });
+    }
+  }, [userProfileABI, userProfileContractAddress]);
+
+  if (loading) return <div style={{ padding: 20 }}>Checking your role...</div>; // ✅
 
   return (
     <Router>
       <Routes>
-        {/* Landing page */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home
+          userProfileABI={userProfileABI}
+          contractAddress={userProfileContractAddress}
+          jobMatchingABI={jobMatchingABI}
+          jobMatchingContractAddress={jobMatchingContractAddress}
+        />} />
 
-        {/* Sign in with MetaMask */}
-        <Route
-          path="/signin"
-          element={
-            <SignInPage
+        <Route path="/signin" element={<SignInPage
+          userProfileABI={userProfileABI}
+          contractAddress={userProfileContractAddress}
+        />} />
+
+        <Route path="/upload-cred" element={
+          <PrivateRoute allowedRole="JobSeeker" currentRole={role}
+          account={account}>
+            <CredentialForm
               userProfileABI={userProfileABI}
               contractAddress={userProfileContractAddress}
             />
-          }
-        />
+          //</PrivateRoute>
+        } />
 
-        {/* View your profile */}
-        <Route
-          path="/profile"
-          element={
-            <Profile
-              userProfileABI={userProfileABI}
-              contractAddress={userProfileContractAddress}
-            />
-          }
-        />
-
-        {/* Browse all jobs */}
-        <Route
-          path="/jobs"
-          element={
+        <Route path="/jobs" element={
+          <PrivateRoute allowedRole="JobSeeker" currentRole={role}
+          account={account}>
             <JobBoard
               jobMatchingABI={jobMatchingABI}
-              contractAddress={jobMatchingContractAddress}
+              jobMatchingContractAddress={jobMatchingContractAddress}
             />
-          }
-        />
+          </PrivateRoute>
+        } />
 
-        {/* Create a new job posting */}
-        <Route
-          path="/create-job"
-          element={
+        <Route path="/create-job" element={
+          <PrivateRoute 
+            allowedRole="HR"
+            currentRole={role}
+            account={account}>
             <JobPostingForm
               jobMatchingABI={jobMatchingABI}
               contractAddress={jobMatchingContractAddress}
             />
-          }
-        />
+          </PrivateRoute>
+        } />
 
-        {/* View jobs YOU have posted */}
-        <Route
-          path="/my-jobs"
-          element={
-            <JobListing
+        <Route path="/my-jobs" element={
+          <PrivateRoute allowedRole="HR" currentRole={role}
+          account={account}>
+            <MyJobPostings
               jobMatchingABI={jobMatchingABI}
               contractAddress={jobMatchingContractAddress}
             />
-          }
-        />
+          </PrivateRoute>
+        } />
       </Routes>
     </Router>
   );

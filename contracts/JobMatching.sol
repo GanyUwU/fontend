@@ -1,27 +1,38 @@
-// contracts/JobMatching.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./UserProfile.sol";
+
 contract JobMatching {
-    // Each job is now represented by its IPFS hash + poster
     struct Job {
         uint256 jobId;
-        string ipfsHash;    // IPFS CID of the job JSON
-        address employer;   // who posted it
+        string ipfsHash;
+        address employer;
     }
 
     Job[] private jobs;
+    UserProfile public userProfile;
 
-    // Emitted when a new job is posted
+    constructor(address userProfileAddress) {
+        userProfile = UserProfile(userProfileAddress);
+    }
+
+    // Only allow addresses registered as HR in the UserProfile contract
+    modifier onlyHR() {
+        require(
+            userProfile.getUserRole(msg.sender) == UserProfile.Role.HR,
+            "Only HR can post jobs"
+        );
+        _;
+    }
+
     event JobPosted(
         uint256 indexed jobId,
         address indexed employer,
         string ipfsHash
     );
 
-    /// @notice Post a new job by supplying the IPFS hash of its JSON data
-    /// @param _ipfsHash The CID where the job details JSON is pinned
-    function createJobPosting(string memory _ipfsHash) public {
+    function createJobPosting(string memory _ipfsHash) public onlyHR {
         uint256 jobId = jobs.length;
         jobs.push(Job({
             jobId: jobId,
@@ -31,11 +42,6 @@ contract JobMatching {
         emit JobPosted(jobId, msg.sender, _ipfsHash);
     }
 
-    /// @notice Get the CID and poster for a given job
-    /// @param _jobId The index of the job
-    /// @return jobId The job’s ID
-    /// @return ipfsHash The CID of the job data
-    /// @return employer The address that posted the job
     function getJob(uint256 _jobId)
         public
         view
@@ -50,8 +56,6 @@ contract JobMatching {
         return (job.jobId, job.ipfsHash, job.employer);
     }
 
-    /// @notice How many jobs have been posted so far
-    /// @return The total count of jobs
     function getJobCount() public view returns (uint256) {
         return jobs.length;
     }

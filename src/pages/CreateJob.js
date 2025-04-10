@@ -1,49 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import web3 from '../utils/web3';
-import axios from 'axios';
-import JobListing from '../components/JobListing';
 
 const MyJobPostings = ({ jobMatchingABI, contractAddress }) => {
   const [myJobs, setMyJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentAccount, setCurrentAccount] = useState('');
 
   useEffect(() => {
     const loadMyJobs = async () => {
       try {
-        // 1. Get connected account
         const accounts = await web3.eth.getAccounts();
         const myAccount = accounts[0];
-        if (!myAccount) throw new Error('No wallet connected');
+        setCurrentAccount(myAccount);
 
-        // 2. Contract instance
         const jobContract = new web3.eth.Contract(jobMatchingABI, contractAddress);
-
-        // 3. How many jobs?
         const jobCount = await jobContract.methods.getJobCount().call();
+        const jobList = [];
 
-        const jobsList = [];
-        // 4. Loop & fetch each job
         for (let i = 0; i < jobCount; i++) {
-          const [id, ipfsHash, employer] = await jobContract.methods.getJob(i).call();
-
-          // Only include jobs you posted
-          if (employer.toLowerCase() !== myAccount.toLowerCase()) continue;
-
-          // 5. Fetch JSON from IPFS
-          const { data: jobData } = await axios.get(
-            `https://gateway.pinata.cloud/ipfs/${ipfsHash}`
-          );
-
-          jobsList.push({
-            id,
-            employer,
-            ...jobData
-          });
+          const job = await jobContract.methods.getJob(i).call();
+          if (job.employer.toLowerCase() === myAccount.toLowerCase()) {
+            const res = await fetch(`https://gateway.pinata.cloud/ipfs/${job.ipfsHash}`);
+            const metadata = await res.json();
+            jobList.push({
+              ...metadata,
+              jobId: i,
+              employer: job.employer
+            });
+          }
         }
 
-        setMyJobs(jobsList);
-      } catch (err) {
-        console.error('Error loading jobs:', err);
+        setMyJobs(jobList);
+      } catch (error) {
+        console.error("Error loading job postings:", error);
       } finally {
         setLoading(false);
       }
@@ -52,19 +41,23 @@ const MyJobPostings = ({ jobMatchingABI, contractAddress }) => {
     loadMyJobs();
   }, [jobMatchingABI, contractAddress]);
 
-  if (loading) {
-    return <div>Loading your job postings…</div>;
-  }
-
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>My Job Postings</h1>
-      {myJobs.length > 0 ? (
-        myJobs.map(job => (
-          <JobListing key={job.id} job={job} />
-        ))
+    <div style={{ padding: 20 }}>
+      <h2>My Job Postings</h2>
+      {loading ? (
+        <p>Loading your jobs...</p>
+      ) : myJobs.length === 0 ? (
+        <p>You haven't posted any jobs yet.</p>
       ) : (
-        <p>You have not posted any jobs yet.</p>
+        myJobs.map((job, index) => (
+          <div key={index} style={{ border: '1px solid #ccc', padding: 15, marginBottom: 15 }}>
+            <h3>{job.title}</h3>
+            <p><strong>Description:</strong> {job.description}</p>
+            <p><strong>Skills:</strong> {job.requiredSkills.join(', ')}</p>
+            <p><strong>Reward:</strong> {job.reward} ETH</p>
+            <p><em>Posted by:</em> {job.employer}</p>
+          </div>
+        ))
       )}
     </div>
   );

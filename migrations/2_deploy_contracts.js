@@ -1,10 +1,9 @@
 const UserProfile = artifacts.require("UserProfile");
 const JobMatching = artifacts.require("JobMatching");
 
-module.exports = async function(deployer) {
-  // Deploy the UserProfile contract
+module.exports = async function (deployer) {
   await deployer.deploy(UserProfile);
+  const userProfileInstance = await UserProfile.deployed();
 
-  // Deploy the JobMatching contract
-  await deployer.deploy(JobMatching);
+  await deployer.deploy(JobMatching, userProfileInstance.address);
 };

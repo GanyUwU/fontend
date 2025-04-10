@@ -14,9 +14,22 @@ const UserProfile = ({ userAddress, userProfileABI, contractAddress }) => {
       setProfile({ name, email, ipfsHash });
     };
     
-
+   
     loadProfile();
   }, [userAddress, userProfileABI, contractAddress]);
+
+   // Add this to your UserProfile component
+   useEffect(() => {
+    const loadProfile = async () => {
+        const [name, email, ipfsHash] = await userProfileABI.methods
+            .getUserProfile(userAddress)
+            .call();
+        setProfile({ name, email, ipfsHash });
+    };
+    
+    if (userAddress) loadProfile();
+  }, [userAddress]);
+
 
   if (!profile) {
     return <div>Loading profile...</div>;
