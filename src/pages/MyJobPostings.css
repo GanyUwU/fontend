@@ -1,0 +1,42 @@
+
+.my-jobs-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .my-job-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s, transform 0.2s;
+  }
+  
+  .my-job-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-3px);
+  }
+  
+  .my-job-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .my-job-card p {
+    margin: 6px 0;
+    color: #555;
+  }
+  
+  .my-job-card p strong {
+    color: #222;
+  }
+  
+  .my-job-card em {
+    color: #777;
+  }
+  

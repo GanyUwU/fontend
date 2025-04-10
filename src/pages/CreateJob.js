@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import web3 from '../utils/web3';
+import './MyJobPostings.css';
 
 const MyJobPostings = ({ jobMatchingABI, contractAddress }) => {
   const [myJobs, setMyJobs] = useState([]);
@@ -41,8 +42,12 @@ const MyJobPostings = ({ jobMatchingABI, contractAddress }) => {
     loadMyJobs();
   }, [jobMatchingABI, contractAddress]);
 
+  // const back = () => {
+  //   window.history.back(); // Go back to the previous page
+  // };
+
   return (
-    <div style={{ padding: 20 }}>
+    <div className="my-jobs-container">
       <h2>My Job Postings</h2>
       {loading ? (
         <p>Loading your jobs...</p>
@@ -59,6 +64,7 @@ const MyJobPostings = ({ jobMatchingABI, contractAddress }) => {
           </div>
         ))
       )}
+      
     </div>
   );
 };

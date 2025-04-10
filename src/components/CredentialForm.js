@@ -1,6 +1,8 @@
 // components/CredentialForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import './CredentialForm.css';
+
 
 const CredentialForm = ({ userProfileABI, contractAddress }) => {
   const [name, setName] = useState('');
@@ -83,7 +85,7 @@ const CredentialForm = ({ userProfileABI, contractAddress }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="credential-form">
       <div>
         <label>Credential Name:</label>
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} />

@@ -1,0 +1,62 @@
+.hr-dashboard {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    max-width: 400px;
+  }
+  
+  .hr-dashboard h3 {
+    margin-bottom: 10px;
+  }
+  
+  .hr-dashboard a {
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+  }
+  
+  .hr-dashboard .create-job {
+    background-color: #007bff;
+  }
+  
+  .hr-dashboard .view-jobs {
+    background-color: #28a745;
+  }
+
+  .jobseeker-dashboard {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f0f8ff;
+    max-width: 400px;
+  }
+  
+  .jobseeker-dashboard h3 {
+    margin-bottom: 10px;
+  }
+  
+  .jobseeker-dashboard a {
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+  }
+  
+  .jobseeker-dashboard .upload-cred {
+    background-color: #17a2b8;
+  }
+  
+  .jobseeker-dashboard .browse-jobs {
+    background-color: #6f42c1;
+  }
+  

@@ -1,0 +1,44 @@
+.job-card {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 18px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .job-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 20px;
+    color: #333;
+  }
+  
+  .job-card p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #444;
+  }
+  
+  .job-card em {
+    color: #888;
+    font-size: 13px;
+  }
+  
+  .job-card button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .job-card button:hover {
+    background-color: #0056b3;
+  }
+  

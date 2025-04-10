@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import web3 from '../utils/web3';
 import axios from 'axios';
 import { ContractMissingDeployDataError } from 'web3';
+import './JobPostingForm.css'
 
 const JobPostingForm = ({ jobMatchingABI, contractAddress }) => {
   const [title, setTitle] = useState('');
@@ -80,7 +81,7 @@ const JobPostingForm = ({ jobMatchingABI, contractAddress }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="job-posting-form" onSubmit={handleSubmit}>
       <div>
         <label>Title:</label>
         <input

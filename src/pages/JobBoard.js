@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import web3 from '../utils/web3';
 import JobListing from '../components/JobListing';
+import './JobBoard.css'
 
 const JobBoard = ({ jobMatchingABI, jobMatchingContractAddress}) => {
   const [jobData, setJobData] = useState([]);
@@ -53,7 +54,7 @@ const JobBoard = ({ jobMatchingABI, jobMatchingContractAddress}) => {
       <h2>Job Board</h2>
       {jobData.length > 0 ? (
         jobData.map((job, index) => (
-          <div key={index} style={{ border: '1px solid #ddd', padding: 15, marginBottom: 15 }}>
+          <div key={index} className="job-card">
             <h3>{job.title}</h3>
             <p><strong>Description:</strong> {job.description}</p>
             <p><strong>Required Skills:</strong> {job.requiredSkills.join(', ')}</p>

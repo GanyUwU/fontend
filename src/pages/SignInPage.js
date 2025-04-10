@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import web3 from '../utils/web3';
-import UserProfile from '../components/UserProfile';
+import './index.css' // Import your CSS file
 
 const ROLE_NONE      = 'None';
 const ROLE_JOBSEEKER = 'JobSeeker';
@@ -172,18 +172,21 @@ const SignInPage = ({ userProfileABI, contractAddress }) => {
 
       {/* Role‑specific navigation */}
       {role === ROLE_JOBSEEKER && (
-        <div style={{ marginTop: 20 }}>
-          <p>You can upload credentials and browse jobs:</p>
-          <Link to="/upload-cred">Upload Credential</Link><br/>
-          <Link to="/jobs">Browse Jobs</Link>
+        <div className="jobseeker-dashboard">
+          <h3>Job Seeker Dashboard</h3>
+            <p>You can:</p>
+            <Link to="/upload-cred" className="upload-cred">🎓 Upload Credentials</Link>
+            <Link to="/jobs" className="browse-jobs">🔍 Browse Jobs</Link>
         </div>
+      
       )}
 
       {role === ROLE_HR && (
-        <div style={{ marginTop: 20 }}>
-          <p>You can post new jobs and view your postings:</p>
-          <Link to="/create-job">Post a Job</Link><br/>
-          <Link to="/my-jobs">My Postings</Link>
+        <div className="hr-dashboard">
+          <h3>HR Dashboard</h3>
+            <p>You can:</p>
+            <Link to="/create-job" className="create-job">📝 Post a New Job</Link>
+            <Link to="/my-jobs" className="view-jobs">📄 View My Job Postings</Link>
         </div>
       )}
     </div>

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import './JobListing.css';
+
 
 const JobListing = ({ jobId, contract }) => {
   const [job, setJob] = useState(null);
@@ -30,13 +32,13 @@ const JobListing = ({ jobId, contract }) => {
   if (!job) return <div>Loading job...</div>;
 
   return (
-    <div className="job-card" style={{ border: '1px solid #ccc', padding: '16px', marginBottom: '16px' }}>
+    <div className="job-card">
       <h2>{job.title}</h2>
       <p><strong>Description:</strong> {job.description}</p>
       <p><strong>Skills:</strong> {job.requiredSkills?.join(', ')}</p>
       <p><strong>Reward:</strong> {job.reward} ETH</p>
       <p><em>Posted by:</em> {job.employer}</p>
-      <button style={{ marginTop: '10px' }}>Apply</button>
+      <button>Apply</button>
     </div>
   );
 };
