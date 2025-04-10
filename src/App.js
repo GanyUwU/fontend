@@ -10,6 +10,7 @@ import SignInPage from './pages/SignInPage';
 import JobPostingForm from './components/JobPostingForm';
 import PrivateRoute from './components/PrivateRoute';
 import CredentialForm from './components/CredentialForm';
+import Resume from './api/resume';
 
 
 
@@ -366,6 +367,9 @@ import CredentialForm from './components/CredentialForm';
             />
           //</PrivateRoute>
         } />
+
+        <Route path="/resume-review" element={<Resume/>} />
+
 
         <Route path="/jobs" element={
           <PrivateRoute allowedRole="JobSeeker" currentRole={role}

@@ -177,6 +177,7 @@ const SignInPage = ({ userProfileABI, contractAddress }) => {
             <p>You can:</p>
             <Link to="/upload-cred" className="upload-cred">🎓 Upload Credentials</Link>
             <Link to="/jobs" className="browse-jobs">🔍 Browse Jobs</Link>
+            <Link to="/resume-review" className="analyze">🧠 Analyze My Resume</Link>
         </div>
       
       )}
