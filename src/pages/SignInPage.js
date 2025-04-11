@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import web3 from '../utils/web3';
-import './index.css' // Import your CSS file
+import './SignInPage.css'
 
 const ROLE_NONE      = 'None';
 const ROLE_JOBSEEKER = 'JobSeeker';
@@ -131,7 +131,7 @@ const SignInPage = ({ userProfileABI, contractAddress }) => {
   // 4. Render
   if (!account) {
     return (
-      <div style={{ padding: 20, fontFamily: 'Arial, sans-serif' }}>
+      <div className='dashboard-container'>
         <h1>Sign In</h1>
         <button onClick={connectWallet}>Connect with MetaMask</button>
       </div>
@@ -159,7 +159,7 @@ const SignInPage = ({ userProfileABI, contractAddress }) => {
 
   // Once registered:
   return (
-    <div style={{ padding: 20, fontFamily: 'Arial, sans-serif' }}>
+    <div className="dashboard-container">
       <h1>Welcome, {role}</h1>
       <p>Connected account: {account}</p>
 
@@ -171,23 +171,32 @@ const SignInPage = ({ userProfileABI, contractAddress }) => {
       /> */}
 
       {/* Role‑specific navigation */}
-      {role === ROLE_JOBSEEKER && (
+            {role === ROLE_JOBSEEKER && (
         <div className="jobseeker-dashboard">
           <h3>Job Seeker Dashboard</h3>
-            <p>You can:</p>
-            <Link to="/upload-cred" className="upload-cred">🎓 Upload Credentials</Link>
-            <Link to="/jobs" className="browse-jobs">🔍 Browse Jobs</Link>
-            <Link to="/resume-review" className="analyze">🧠 Analyze My Resume</Link>
+          <p>You can:</p>
+          <Link to="/upload-cred" className="upload-cred">
+            <span>🎓</span> Upload Credentials
+          </Link>
+          <Link to="/jobs" className="browse-jobs">
+            <span>🔍</span> Browse Jobs
+          </Link>
+          <Link to="/resume-review" className="analyze">
+            <span>🧠</span> Analyze My Resume
+          </Link>
         </div>
-      
       )}
 
       {role === ROLE_HR && (
         <div className="hr-dashboard">
           <h3>HR Dashboard</h3>
-            <p>You can:</p>
-            <Link to="/create-job" className="create-job">📝 Post a New Job</Link>
-            <Link to="/my-jobs" className="view-jobs">📄 View My Job Postings</Link>
+          <p>You can:</p>
+          <Link to="/create-job" className="create-job">
+            <span>📝</span> Post a New Job
+          </Link>
+          <Link to="/my-jobs" className="view-jobs">
+            <span>📄</span> View My Job Postings
+          </Link>
         </div>
       )}
     </div>

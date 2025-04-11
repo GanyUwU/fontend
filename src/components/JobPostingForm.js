@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import web3 from '../utils/web3';
 import axios from 'axios';
-import { ContractMissingDeployDataError } from 'web3';
 import './JobPostingForm.css'
 
 const JobPostingForm = ({ jobMatchingABI, contractAddress }) => {
@@ -82,7 +81,7 @@ const JobPostingForm = ({ jobMatchingABI, contractAddress }) => {
 
   return (
     <form className="job-posting-form" onSubmit={handleSubmit}>
-      <div>
+      <div class="form-group">
         <label>Title:</label>
         <input
           type="text"
@@ -92,7 +91,7 @@ const JobPostingForm = ({ jobMatchingABI, contractAddress }) => {
         />
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Description:</label>
         <textarea
           value={description}
@@ -101,7 +100,7 @@ const JobPostingForm = ({ jobMatchingABI, contractAddress }) => {
         />
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Required Skills (comma-separated):</label>
         <input
           type="text"
@@ -110,7 +109,7 @@ const JobPostingForm = ({ jobMatchingABI, contractAddress }) => {
         />
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Reward:</label>
         <input
           type="number"

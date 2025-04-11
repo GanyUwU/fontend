@@ -1,66 +1,129 @@
 .job-posting-form {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 24px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-family: 'Segoe UI', sans-serif;
-  }
-  
-  .job-posting-form h2 {
-    margin-bottom: 20px;
-    text-align: center;
-    color: #333;
-  }
-  
-  .job-posting-form label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #444;
-  }
-  
-  .job-posting-form input,
-  .job-posting-form textarea {
-    width: 100%;
-    padding: 10px 14px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border-color 0.3s;
-  }
-  
-  .job-posting-form input:focus,
-  .job-posting-form textarea:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-  
-  .job-posting-form textarea {
-    resize: vertical;
-    min-height: 100px;
-  }
-  
-  .job-posting-form button {
-    width: 100%;
-    background-color: #007bff;
-    color: white;
-    font-size: 16px;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .job-posting-form button:hover {
-    background-color: #0056b3;
-  }
-  
-  .job-posting-form button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
+  /* Existing container styles for dark, glassy look */
+  max-width: 400px; /* Try a narrower width if you want less wide spacing */
+  margin: 2rem auto;
+  padding: 4em;
+  background: rgba(30, 30, 30, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25),
+              0 5px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: 'Inter', 'Arial', sans-serif;
+  color: #cfcfcf;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* Optional radial highlight behind container */
+.job-posting-form::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 50%);
+  opacity: 0.3;
+  transform: rotate(30deg);
+  pointer-events: none;
+  margin: 2em;
+}
+
+/* Title or heading inside the form */
+.job-posting-form h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  font-size: 1.75rem;
+}
+
+/* A small grouping wrapper to ensure consistent spacing */
+.job-posting-form .form-group {
+  margin-bottom: 1.5rem; /* vertical space between fields */
+}
+
+/* Labels */
+.job-posting-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #cfcfcf;
+}
+
+/* Inputs and textareas */
+.job-posting-form input,
+.job-posting-form textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  font-size: 16px;
+  background: rgba(70, 70, 70, 0.6);
+  color: #ffffff;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  font-family: inherit;
+}
+
+/* Focus state (blueish glow) */
+.job-posting-form input:focus,
+.job-posting-form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+/* Textarea specifics */
+.job-posting-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Submit button */
+.job-posting-form button {
+  width: 100%;
+  background: linear-gradient(135deg, #666, #444);
+  color: #fff;
+  font-size: 16px;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.job-posting-form button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: 0.6s;
+}
+
+.job-posting-form button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.job-posting-form button:hover::after {
+  left: 100%;
+}
+
+.job-posting-form button:active {
+  transform: translateY(1px);
+}
+
+.job-posting-form button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}

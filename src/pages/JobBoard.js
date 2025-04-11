@@ -1,25 +1,19 @@
-// pages/JobBoard.js
 import React, { useEffect, useState } from 'react';
 import web3 from '../utils/web3';
 import JobListing from '../components/JobListing';
-import './JobBoard.css'
+import './JobBoard.css';
 
-const JobBoard = ({ jobMatchingABI, jobMatchingContractAddress}) => {
+const JobBoard = ({ jobMatchingABI, jobMatchingContractAddress }) => {
   const [jobData, setJobData] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log("ABI:", jobMatchingABI);
-  console.log("Contract address:", jobMatchingContractAddress);
+  const [appliedJobs, setAppliedJobs] = useState({}); // Track applied jobs
 
-  jobMatchingContractAddress="0xa9bE53E9853F120BbA5122E328b0941Da4Fda161";
-  console.log("Contract address:", jobMatchingContractAddress);
-  
   useEffect(() => {
     const loadJobs = async () => {
       try {
-        const contract = new web3.eth.Contract(jobMatchingABI,jobMatchingContractAddress);
+        const contract = new web3.eth.Contract(jobMatchingABI, jobMatchingContractAddress);
         const jobCount = await contract.methods.getJobCount().call();
         const jobs = [];
-        console.log(contract);
 
         for (let i = 0; i < jobCount; i++) {
           const job = await contract.methods.getJob(i).call();
@@ -38,7 +32,7 @@ const JobBoard = ({ jobMatchingABI, jobMatchingContractAddress}) => {
 
         setJobData(jobs);
       } catch (err) {
-        console.error("Error loading jobs from contract:", err);
+        console.error('Error loading jobs from contract:', err);
       } finally {
         setLoading(false);
       }
@@ -47,11 +41,16 @@ const JobBoard = ({ jobMatchingABI, jobMatchingContractAddress}) => {
     loadJobs();
   }, [jobMatchingABI, jobMatchingContractAddress]);
 
+  const handleApply = (jobId) => {
+    alert('Applied');
+    setAppliedJobs((prev) => ({ ...prev, [jobId]: true })); // Mark job as applied
+  };
+
   if (loading) return <p>Loading job board…</p>;
 
   return (
     <div>
-      <h2>Job Board</h2>
+      <h2 style={{ textAlign: 'center' }}>Job Board</h2>
       {jobData.length > 0 ? (
         jobData.map((job, index) => (
           <div key={index} className="job-card">
@@ -60,7 +59,13 @@ const JobBoard = ({ jobMatchingABI, jobMatchingContractAddress}) => {
             <p><strong>Required Skills:</strong> {job.requiredSkills.join(', ')}</p>
             <p><strong>Reward:</strong> {job.reward} ETH</p>
             <p><em>Posted by:</em> {job.employer}</p>
-            <button style={{ marginTop: 10 }}>Apply</button>
+            <button
+              style={{ marginTop: 10 }}
+              onClick={() => handleApply(job.jobId)}
+              disabled={appliedJobs[job.jobId]} // Disable button if already applied
+            >
+              {appliedJobs[job.jobId] ? 'Applied' : 'Apply'}
+            </button>
           </div>
         ))
       ) : (
